@@ -1,101 +1,88 @@
-import dbconn
+#* Write a python program to print all employees, employees of given department, employee with highest and lowest salary
+import mysql.connector
 
-connection=dbconn.get_connection()
+# Connect to the database
+connection = mysql.connector.connect(
+    
+    host="localhost",
+    port=3306, 
+    user="sunbeam",
+    password="sunbeam",
+    database="iotdb"
 
-def employee():
-    #form a qery
+)
+def show():
     query = "select * from employees;"
-
-    # create a cursor to execute query
     cursor = connection.cursor()
-
-    # execute query using cursor
     cursor.execute(query)
-
-    # get data from cursor
-    records = cursor.fetchall()     #   returns list of tuples
-
-    print(records)
-
-    # close the cursor
+    for row in cursor:
+        print(row)
     cursor.close()
 
-    # close the connection
-    connection.close()
 
-def department(value):
-    # temp=input("Enter department :")
-    
-    query = "select *from employees where dep=%s;"
-    
-    val=(value,)
-
-    # create a cursor to execute query
+def show_department(department):
+    query = "select * from employees where dep=%s;" 
     cursor = connection.cursor()
-
-    # execute query using cursor
-    cursor.execute(query,val)
-
-    # get data from cursor
-    records = cursor.fetchall()     #   returns list of tuples
-
-    print(records)
-
-    # close the cursor
+    cursor.execute(query, (department, ))
+    for row in cursor:
+        print(row)
     cursor.close()
 
-    # close the connection
-    connection.close()
-
-
-def highest_salary():
-        #form a qery
-    query = "select salary from employees where salary=MAX;"
-
-    # create a cursor to execute query
+def show_highest_salary():
+    query = "select * from employees order by salary desc limit 1;"
+    #query = "select MAX(salary) from employees;"
     cursor = connection.cursor()
-
-    # execute query using cursor
     cursor.execute(query)
-
-    # get data from cursor
-    records = cursor.fetchall()     #   returns list of tuples
-
-    print(records)
-
-    # close the cursor
+    for row in cursor:
+        print(row)
     cursor.close()
+   
 
-    # close the connection
-    connection.close()
 
-def Minimum_salary():
-        #form a qery
-    query = "select salary from employees where salary=MIN;"
-
-    # create a cursor to execute query
+def show_lowest_salary():
+    query = "select * from employees order by salary asc limit 1;"
     cursor = connection.cursor()
-
-    # execute query using cursor
     cursor.execute(query)
-
-    # get data from cursor
-    records = cursor.fetchall()     #   returns list of tuples
-
-    print(records)
-
-    # close the cursor
+    for row in cursor:
+        print(row)
     cursor.close()
 
-    # close the connection
-    connection.close()
 
 
-employee()
-dep=input("Enter dep:")
-department(dep)
-# highest_salary()
-# Minimum_salary()
+while True:
+        
+    choice=int(input("Enter 1 to show all employees, 2 to show employees of given department, 3 to show employee with highest salary, 4 to show employee with lowest salary, 5 to exit: "))
+    match choice:
+        case 1:
+            print("Showing all employees")
+            show()
+        case 2:
+              
+            department=input("Enter department name: ")
+            print(f"Showing employees of department: '{department}'")
+            show_department(department)
+
+        case 3:
+            print("Showing employee with highest salary")
+            show_highest_salary()
 
 
-# select salary from employees;
+        case 4:
+            print("Showing employee with lowest salary")
+            show_lowest_salary()
+
+        case 5:
+
+
+
+            print("Exiting")
+
+                    
+            break
+
+        case _:
+            print("Invalid choice")
+
+
+#close the connection with mysql server 
+connection.close()
